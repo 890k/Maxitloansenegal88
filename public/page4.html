@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Orange Money Loans - Étape 3</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --orange-primary: #f25c05;
+            --bg-color: #f7f3ed;
+            --card-bg: #ffffff;
+            --input-bg: #fdfaf6;
+            --border-color: #ffd8b3;
+            --text-dark: #222222;
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .header-box { width: 100%; background: var(--orange-primary); padding: 18px 20px; color: white; text-align: center; font-size: 22px; font-weight: 800; box-sizing: border-box; }
+        
+        .card { background: var(--card-bg); width: 92%; max-width: 440px; margin: 24px 0; padding: 28px 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; }
+
+        .progress-bar-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 18px; }
+        .step-pill { height: 4px; flex: 1; border-radius: 2px; background-color: var(--orange-primary); }
+
+        .step-title { text-align: center; font-size: 20px; font-weight: 800; color: var(--text-dark); margin-bottom: 24px; }
+
+        .form-row { display: flex; gap: 12px; margin-bottom: 20px; }
+        .form-group { flex: 1; display: flex; flex-direction: column; }
+        label { font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+
+        .form-control {
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 12px;
+            font-size: 15px;
+            color: var(--text-dark);
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background-color: #fdfaf6;
+            border-left: 4px solid var(--orange-primary);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 24px;
+        }
+
+        .summary-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--text-dark); }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: #444; }
+        .summary-row span:last-child { font-weight: 700; color: var(--text-dark); }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1.5px solid var(--border-color);
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .btn-orange {
+            background-color: var(--orange-primary);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-box">Orange Money Loans</div>
+
+<div class="card">
+    <div class="progress-bar-container">
+        <div class="step-pill"></div>
+        <div class="step-pill"></div>
+        <div class="step-pill"></div>
+    </div>
+
+    <div class="step-title">Étape 3 sur 3</div>
+
+    <form onsubmit="submitForm(event)">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Emploi</label>
+                <select id="job" class="form-control">
+                    <option value="Employé">Employé</option>
+                    <option value="Entrepreneur">Entrepreneur</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Revenu annuel (XOF)</label>
+                <input type="number" id="income" class="form-control" value="500000" required>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-title">Résumé de la demande</div>
+            <div class="summary-row"><span>Montant</span><span id="sumAmt">50000 XOF</span></div>
+            <div class="summary-row"><span>Durée</span><span id="sumDur">12 mois</span></div>
+            <div class="summary-row"><span>Type</span><span id="sumType">Personnel</span></div>
+            <div class="summary-row"><span>Demandeur</span><span id="sumName">Aron tuei</span></div>
+        </div>
+
+        <button type="button" class="btn-outline" onclick="history.back()">PRÉCÉDENT</button>
+        <button type="submit" class="btn-orange">SOUMETTRE</button>
+    </form>
+</div>
+
+<script>
+    window.onload = () => {
+        const amt = localStorage.getItem('loan_amount') || "50000";
+        const dur = localStorage.getItem('duration') || "12 mois";
+        const type = localStorage.getItem('loanType') || "Personnel";
+        const fname = localStorage.getItem('firstName') || "";
+        const lname = localStorage.getItem('lastName') || "";
+
+        document.getElementById('sumAmt').innerText = `${amt} XOF`;
+        document.getElementById('sumDur').innerText = dur;
+        document.getElementById('sumType').innerText = type;
+        document.getElementById('sumName').innerText = `${fname} ${lname}`.trim() || "Aron tuei";
+    };
+
+    function submitForm(e) {
+        e.preventDefault();
+        window.location.href = "page5.html";
+    }
+</script>
+</body>
+</html>
